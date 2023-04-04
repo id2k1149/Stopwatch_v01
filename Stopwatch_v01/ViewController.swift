@@ -13,15 +13,15 @@ class ViewController: UIViewController {
     let circleView = UIView()
     
     var startTime: TimeInterval?
-        var timer: Timer?
-        
-        let timeLabel: UILabel = {
-            let label = UILabel()
-            label.font = UIFont.systemFont(ofSize: 64)
-            label.textAlignment = .center
-            label.text = "00:00.00"
-            return label
-        }()
+    var timer: Timer?
+    
+    let timeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.monospacedDigitSystemFont(ofSize: 64, weight: .regular)
+        label.textAlignment = .center
+        label.text = "00:00.00"
+        return label
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
