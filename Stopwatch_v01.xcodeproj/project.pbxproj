@@ -13,6 +13,7 @@
 		5061DF5529DB9A86000518E0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5061DF5329DB9A86000518E0 /* Main.storyboard */; };
 		5061DF5729DB9A8B000518E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5061DF5629DB9A8B000518E0 /* Assets.xcassets */; };
 		5061DF5A29DB9A8B000518E0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5061DF5829DB9A8B000518E0 /* LaunchScreen.storyboard */; };
+		50C7DC6529DC815300F67CD9 /* AnalogStopwatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C7DC6429DC815300F67CD9 /* AnalogStopwatchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		5061DF5629DB9A8B000518E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5061DF5929DB9A8B000518E0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5061DF5B29DB9A8B000518E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		50C7DC6429DC815300F67CD9 /* AnalogStopwatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalogStopwatchView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				5061DF4D29DB9A86000518E0 /* AppDelegate.swift */,
 				5061DF4F29DB9A86000518E0 /* SceneDelegate.swift */,
 				5061DF5129DB9A86000518E0 /* ViewController.swift */,
+				50C7DC6429DC815300F67CD9 /* AnalogStopwatchView.swift */,
 				5061DF5329DB9A86000518E0 /* Main.storyboard */,
 				5061DF5629DB9A8B000518E0 /* Assets.xcassets */,
 				5061DF5829DB9A8B000518E0 /* LaunchScreen.storyboard */,
@@ -140,6 +143,7 @@
 			files = (
 				5061DF5229DB9A86000518E0 /* ViewController.swift in Sources */,
 				5061DF4E29DB9A86000518E0 /* AppDelegate.swift in Sources */,
+				50C7DC6529DC815300F67CD9 /* AnalogStopwatchView.swift in Sources */,
 				5061DF5029DB9A86000518E0 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
