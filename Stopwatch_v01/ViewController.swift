@@ -13,20 +13,18 @@ class ViewController: UIViewController {
     let circleView = UIView()
     
     var digitalStartTime: TimeInterval?
-    var digitalTimer: Timer?
+    var timer: Timer?
     
     let handLayer = CAShapeLayer()
     
     let digitalTimeLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.monospacedDigitSystemFont(ofSize: 64, weight: .regular)
+        label.font = UIFont.monospacedDigitSystemFont(ofSize: 64,
+                                                      weight: .regular)
         label.textAlignment = .center
         label.text = "00:00.00"
         return label
     }()
-    
-    var analogStartTime: TimeInterval?
-    var analogTimer: Timer?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,14 +32,8 @@ class ViewController: UIViewController {
         view.backgroundColor = .cyan
         addView(using: squareView, size: 0.9, color: .black)
         addView(using: circleView, size: 0.7, color: .white)
-        
-        // Add time label to view
-        view.addSubview(digitalTimeLabel)
-        digitalTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            digitalTimeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            digitalTimeLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100),
-        ])
+        addDigitalView(digitalTimeLabel: digitalTimeLabel)
+        addHandLayer(handLayer: handLayer)
         
         // Add start button to view
         let startButton = UIButton(type: .system)
@@ -50,27 +42,19 @@ class ViewController: UIViewController {
         startButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         startButton.setTitleColor(UIColor.white, for: .normal)
         startButton.layer.cornerRadius = 25
-        startButton.addTarget(self, action: #selector(startStopwatch), for: .touchUpInside)
+        startButton.addTarget(self,
+                              action: #selector(startStopwatch),
+                              for: .touchUpInside)
         view.addSubview(startButton)
         startButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
+            startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                                constant: -30),
             startButton.widthAnchor.constraint(equalToConstant: 200),
             startButton.heightAnchor.constraint(equalToConstant: 50)
         ])
         
-        // Set up the hand layer
-        let handPath = UIBezierPath()
-        handPath.move(to: view.center)
-        let circleRadius = view.bounds.width / 2 * 0.90
-        handPath.addLine(to: CGPoint(x: view.center.x, y: view.center.y - circleRadius))
-        handLayer.path = handPath.cgPath
-        handLayer.strokeColor = UIColor.red.cgColor
-        handLayer.lineWidth = 3
-        handLayer.lineCap = .round
-        view.layer.addSublayer(handLayer)
-
     }
     
     override func viewDidLayoutSubviews() {
@@ -80,14 +64,16 @@ class ViewController: UIViewController {
         circleView.layer.cornerRadius = circleView.frame.width / 2
         
         addMinuteMarks(to: circleView)
-        
     }
     
     @objc func startStopwatch() {
-        if digitalTimer == nil {
+        if timer == nil {
             // Start the timer
             digitalStartTime = Date().timeIntervalSinceReferenceDate
-            digitalTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(updateDigitalTimeLabel), userInfo: nil, repeats: true)
+            timer = Timer.scheduledTimer(timeInterval: 0.01,
+                                         target: self,
+                                         selector: #selector(updateDigitalTimeLabel),
+                                         userInfo: nil, repeats: true)
             
             // Change button title to "Stop"
             if let startButton = view.subviews.first(where: { $0 is UIButton }) as? UIButton {
@@ -95,12 +81,8 @@ class ViewController: UIViewController {
             }
         } else {
             // Stop the timer
-            digitalTimer?.invalidate()
-            digitalTimer = nil
-            
-            // Stop the analog timer
-            analogTimer?.invalidate()
-            analogTimer = nil
+            timer?.invalidate()
+            timer = nil
             
             // Change button title to "Start"
             if let startButton = view.subviews.first(where: { $0 is UIButton }) as? UIButton {
@@ -128,11 +110,11 @@ class ViewController: UIViewController {
                                        hundredths)
         
         // Update the hand position
-        let counter = Float(seconds) + Float(hundredths) / 100
-        let angle = 2 * .pi * counter / 60 - .pi / 2
+        let fullSeconds = Float(seconds) + Float(hundredths) / 100
+        let angle = 2 * .pi * fullSeconds / 60 - .pi / 2
  
         let circleCenter = CGPoint(x: view.center.x, y: view.center.y)
-        let circleRadius = view.bounds.width / 2 * 0.90
+        let circleRadius = view.bounds.width / 2 * 0.65
         let handPath = UIBezierPath()
         handPath.move(to: circleCenter)
         handPath.addLine(to: CGPoint(x: circleCenter.x + circleRadius * CGFloat(cos(angle)),
@@ -165,6 +147,7 @@ extension UIViewController {
         for i in 0..<60 {
             let mark = UIView(frame: CGRect(origin: .zero, size: markSize))
             let angle = CGFloat(i) / 60.0 * 2.0 * CGFloat.pi
+            mark.frame.size.width = i % 5 == 0 ? 16 : 8
             let x = cos(angle) * markRadius + circleView.frame.width/2
             let y = sin(angle) * markRadius + circleView.frame.height/2
             mark.center = CGPoint(x: x, y: y)
@@ -172,5 +155,27 @@ extension UIViewController {
             mark.transform = CGAffineTransform(rotationAngle: angle)
             circleView.addSubview(mark)
         }
+    }
+    
+    func addDigitalView(digitalTimeLabel: UIView) {
+        view.addSubview(digitalTimeLabel)
+        digitalTimeLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            digitalTimeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            digitalTimeLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100),
+        ])
+    }
+    
+    func addHandLayer(handLayer: CAShapeLayer) {
+        // Set up the hand layer
+        let handPath = UIBezierPath()
+        handPath.move(to: view.center)
+        let circleRadius = view.bounds.width / 2 * 0.65
+        handPath.addLine(to: CGPoint(x: view.center.x, y: view.center.y - circleRadius))
+        handLayer.path = handPath.cgPath
+        handLayer.strokeColor = UIColor.red.cgColor
+        handLayer.lineWidth = 3
+        handLayer.lineCap = .round
+        view.layer.addSublayer(handLayer)
     }
 }
