@@ -64,6 +64,7 @@ class ViewController: UIViewController {
         circleView.layer.cornerRadius = circleView.frame.width / 2
         
         addMinuteMarks(to: circleView)
+        addCenterCircle(to: circleView)
     }
     
     @objc func startStopwatch() {
@@ -112,7 +113,7 @@ class ViewController: UIViewController {
         // Update the hand position
         let fullSeconds = Float(seconds) + Float(hundredths) / 100
         let angle = 2 * .pi * fullSeconds / 60 - .pi / 2
- 
+        
         let circleCenter = CGPoint(x: view.center.x, y: view.center.y)
         let circleRadius = view.bounds.width / 2 * 0.65
         let handPath = UIBezierPath()
@@ -120,8 +121,7 @@ class ViewController: UIViewController {
         handPath.addLine(to: CGPoint(x: circleCenter.x + circleRadius * CGFloat(cos(angle)),
                                      y: circleCenter.y + circleRadius * CGFloat(sin(angle))))
         handLayer.path = handPath.cgPath
-           }
-
+    }
 }
 
 extension UIViewController {
@@ -171,11 +171,26 @@ extension UIViewController {
         let handPath = UIBezierPath()
         handPath.move(to: view.center)
         let circleRadius = view.bounds.width / 2 * 0.65
-        handPath.addLine(to: CGPoint(x: view.center.x, y: view.center.y - circleRadius))
+        handPath.addLine(to: CGPoint(x: view.center.x,
+                                     y: view.center.y - circleRadius))
         handLayer.path = handPath.cgPath
-        handLayer.strokeColor = UIColor.red.cgColor
+        handLayer.strokeColor = UIColor.orange.cgColor
         handLayer.lineWidth = 3
         handLayer.lineCap = .round
         view.layer.addSublayer(handLayer)
+    }
+    
+    func addCenterCircle(to view: UIView) {
+        let circleRadius = view.frame.width / 30
+        let circleCenter = CGPoint(x: view.frame.width / 2,
+                                   y: view.frame.height / 2)
+
+        let orangeCircle = UIView(frame: CGRect(origin: .zero,
+                                                size: CGSize(width: circleRadius * 2 - 6,
+                                                             height: circleRadius * 2 - 6)))
+        orangeCircle.backgroundColor = UIColor.orange
+        orangeCircle.layer.cornerRadius = (circleRadius * 2 - 6.0) / 2.0
+        orangeCircle.center = circleCenter
+        view.addSubview(orangeCircle)
     }
 }
