@@ -15,6 +15,8 @@ class ViewController: UIViewController {
     var digitalStartTime: TimeInterval?
     var digitalTimer: Timer?
     
+    let handLayer = CAShapeLayer()
+    
     let digitalTimeLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.monospacedDigitSystemFont(ofSize: 64, weight: .regular)
@@ -25,8 +27,6 @@ class ViewController: UIViewController {
     
     var analogStartTime: TimeInterval?
     var analogTimer: Timer?
-    
-    let analogStopwatchView = AnalogStopwatchView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,16 +41,6 @@ class ViewController: UIViewController {
         NSLayoutConstraint.activate([
             digitalTimeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             digitalTimeLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100),
-        ])
-        
-        // Add analog stopwatch view to view
-        view.addSubview(analogStopwatchView)
-        analogStopwatchView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            analogStopwatchView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            analogStopwatchView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            analogStopwatchView.widthAnchor.constraint(equalToConstant: 100),
-            analogStopwatchView.heightAnchor.constraint(equalToConstant: 100)
         ])
         
         // Add start button to view
@@ -69,8 +59,18 @@ class ViewController: UIViewController {
             startButton.widthAnchor.constraint(equalToConstant: 200),
             startButton.heightAnchor.constraint(equalToConstant: 50)
         ])
-
         
+        // Set up the hand layer
+        let handPath = UIBezierPath()
+        handPath.move(to: view.center)
+        let circleRadius = view.bounds.width / 2 * 0.90
+        handPath.addLine(to: CGPoint(x: view.center.x, y: view.center.y - circleRadius))
+        handLayer.path = handPath.cgPath
+        handLayer.strokeColor = UIColor.red.cgColor
+        handLayer.lineWidth = 3
+        handLayer.lineCap = .round
+        view.layer.addSublayer(handLayer)
+
     }
     
     override func viewDidLayoutSubviews() {
@@ -81,7 +81,6 @@ class ViewController: UIViewController {
         
         addMinuteMarks(to: circleView)
         
-        
     }
     
     @objc func startStopwatch() {
@@ -90,10 +89,6 @@ class ViewController: UIViewController {
             digitalStartTime = Date().timeIntervalSinceReferenceDate
             digitalTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(updateDigitalTimeLabel), userInfo: nil, repeats: true)
             
-            // Start the analog timer
-            analogStartTime = Date().timeIntervalSinceReferenceDate
-            analogTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(updateAnalogStopwatch), userInfo: nil, repeats: true)
-                     
             // Change button title to "Stop"
             if let startButton = view.subviews.first(where: { $0 is UIButton }) as? UIButton {
                 startButton.setTitle("Stop", for: .normal)
@@ -114,25 +109,6 @@ class ViewController: UIViewController {
         }
     }
     
-//    @objc func updateTimeLabel() {
-//        guard let startTime = digitalStartTime else { return }
-//
-//        // Calculate elapsed time
-//        let currentTime = Date().timeIntervalSinceReferenceDate
-//        let elapsedTime = currentTime - startTime
-//
-//        // Format elapsed time as minutes, seconds, and hundredths of a second
-//        let minutes = Int(elapsedTime / 60)
-//        let seconds = Int(elapsedTime) % 60
-//        let hundredths = Int((elapsedTime.truncatingRemainder(dividingBy: 1)) * 100)
-//
-//        // Update time label text
-//        digitalTimeLabel.text = String(format: "%02d:%02d.%02d",
-//                                minutes,
-//                                seconds,
-//                                hundredths)
-//    }
-    
     @objc func updateDigitalTimeLabel() {
         guard let startTime = digitalStartTime else { return }
         
@@ -143,26 +119,26 @@ class ViewController: UIViewController {
         // Format elapsed time as minutes, seconds, and hundredths of a second
         let minutes = Int(elapsedTime / 60)
         let seconds = Int(elapsedTime) % 60
-        let hundredths = Int((elapsedTime * 100).truncatingRemainder(dividingBy: 100))
+        let hundredths = Int((elapsedTime.truncatingRemainder(dividingBy: 1)) * 100)
         
         // Update time label text
         digitalTimeLabel.text = String(format: "%02d:%02d.%02d",
                                        minutes,
                                        seconds,
                                        hundredths)
-    }
-
-    @objc func updateAnalogStopwatch() {
-        guard let startTime = analogStartTime else { return }
         
-        let currentTime = Date().timeIntervalSinceReferenceDate
-        let elapsedTime = currentTime - startTime
-        
-        // 30 is the number of seconds for a full rotation
-//        let rotationAngle = CGFloat(elapsedTime) * .pi / 30
-        
-//        analogStopwatchView.rotateHand(to: rotationAngle)
-    }
+        // Update the hand position
+        let counter = Float(seconds) + Float(hundredths) / 100
+        let angle = 2 * .pi * counter / 60 - .pi / 2
+ 
+        let circleCenter = CGPoint(x: view.center.x, y: view.center.y)
+        let circleRadius = view.bounds.width / 2 * 0.90
+        let handPath = UIBezierPath()
+        handPath.move(to: circleCenter)
+        handPath.addLine(to: CGPoint(x: circleCenter.x + circleRadius * CGFloat(cos(angle)),
+                                     y: circleCenter.y + circleRadius * CGFloat(sin(angle))))
+        handLayer.path = handPath.cgPath
+           }
 
 }
 
