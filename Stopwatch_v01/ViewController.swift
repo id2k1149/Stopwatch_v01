@@ -186,8 +186,10 @@ extension UIViewController {
                                    y: view.frame.height / 2)
 
         let orangeCircle = UIView(frame: CGRect(origin: .zero,
-                                                size: CGSize(width: circleRadius * 2 - 6,
-                                                             height: circleRadius * 2 - 6)))
+                                                size: CGSize(
+                                                    width: circleRadius * 2 - 6,
+                                                    height: circleRadius * 2 - 6
+                                                )))
         orangeCircle.backgroundColor = UIColor.orange
         orangeCircle.layer.cornerRadius = (circleRadius * 2 - 6.0) / 2.0
         orangeCircle.center = circleCenter
